@@ -18,8 +18,6 @@ namespace Blackboard_Quiz_Form
         public Word.ContentControl QuestionItem { get; set; }
         public float QuestionPosition { get; set; }
         public int QuestionNumber { get; set; }
-
-
     }
     public partial class ThisDocument
     {
@@ -32,6 +30,7 @@ namespace Blackboard_Quiz_Form
             newQuestion.QuestionItem = SelectContentControlsByTag("question")[1];
             newQuestion.QuestionPosition = SelectContentControlsByTag("question")[1].Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage];
             newQuestion.QuestionNumber = 1;
+            questionList.Add(newQuestion);
         }
 
         private void ThisDocument_Shutdown(object sender, System.EventArgs e)
@@ -47,12 +46,7 @@ namespace Blackboard_Quiz_Form
         /// </summary>
         private void InternalStartup()
         {
-            this.richTextContentControl1.Entering += new Microsoft.Office.Tools.Word.ContentControlEnteringEventHandler(this.richTextContentControl1_Entering);
-            this.richTextContentControl1.Exiting += new Microsoft.Office.Tools.Word.ContentControlExitingEventHandler(this.richTextContentControl1_Exiting);
-            this.richTextContentControl2.Entering += new Microsoft.Office.Tools.Word.ContentControlEnteringEventHandler(this.richTextContentControl2_Entering);
-            this.richTextContentControl3.Exiting += new Microsoft.Office.Tools.Word.ContentControlExitingEventHandler(this.richTextContentControl3_Exiting);
-            this.plainTextContentControl2.Entering += new Microsoft.Office.Tools.Word.ContentControlEnteringEventHandler(this.plainTextContentControl2_Entering);
-            this.plainTextContentControl3.Exiting += new Microsoft.Office.Tools.Word.ContentControlExitingEventHandler(this.plainTextContentControl3_Exiting);
+            this.ContentControlAfterAdd += new Microsoft.Office.Interop.Word.DocumentEvents2_ContentControlAfterAddEventHandler(this.ThisDocument_ContentControlAfterAdd);
             this.Startup += new System.EventHandler(this.ThisDocument_Startup);
             this.Shutdown += new System.EventHandler(this.ThisDocument_Shutdown);
 
@@ -60,29 +54,27 @@ namespace Blackboard_Quiz_Form
 
         #endregion
 
-        private void richTextContentControl2_Entering(object sender, ContentControlEnteringEventArgs e)
+        private void ThisDocument_ContentControlAfterAdd(Word.ContentControl NewContentControl, bool InUndoRedo)
         {
 
-        }
-
-        private void plainTextContentControl2_Entering(object sender, ContentControlEnteringEventArgs e)
-        {
-
-        }
-
-        private void plainTextContentControl1_Entering(object sender, ContentControlEnteringEventArgs e)
-        {
-
-        }
-
-        private void richTextContentControl1_Entering(object sender, ContentControlEnteringEventArgs e)
-        {
-
-        }
-
-        private void richTextContentControl3_Exiting(object sender, ContentControlExitingEventArgs e)
-        {
-
+            Debug.WriteLine(NewContentControl.Tag);
+            if (NewContentControl.Tag == "question")
+            {
+                Question NewQuestion = new Question();
+                questionList.Add(NewQuestion);
+                NewQuestion.QuestionItem = NewContentControl;
+                NewQuestion.QuestionPosition = NewContentControl.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage];
+                if (questionList.Count >= 1)
+                {
+                    NewQuestion.QuestionNumber = questionList.IndexOf(NewQuestion) + 1;
+                    Debug.Print(NewQuestion.QuestionNumber.ToString());
+                }
+                NewQuestion.QuestionItem.Title = "Question " + NewQuestion.QuestionNumber;
+            }
+            foreach(Question q in questionList)
+            {
+                Debug.WriteLine(q.QuestionNumber);
+            }
         }
 
         private void plainTextContentControl1_Exiting(object sender, ContentControlExitingEventArgs e)
@@ -158,6 +150,7 @@ namespace Blackboard_Quiz_Form
             }
             */
         }
+        /*
         private void plainTextContentControl3_Exiting(object sender, ContentControlExitingEventArgs e)
         {
             Question NewQuestion = new Question();
@@ -187,9 +180,6 @@ namespace Blackboard_Quiz_Form
             }
             j++;
         }
-    private void richTextContentControl1_Exiting(object sender, ContentControlExitingEventArgs e)
-        {
-
-        }
+        */
     }
 }
