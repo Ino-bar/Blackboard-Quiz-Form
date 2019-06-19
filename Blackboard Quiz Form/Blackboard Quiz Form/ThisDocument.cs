@@ -73,7 +73,18 @@ namespace Blackboard_Quiz_Form
             }
             foreach(Question q in questionList)
             {
-                Debug.WriteLine(q.QuestionNumber);
+                //Debug.WriteLine(q.QuestionNumber);
+                float position = q.QuestionItem.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage];
+                Debug.WriteLine(q.QuestionNumber + ", " + position);
+            }
+            IOrderedEnumerable<Question> ordered = questionList.OrderBy(Question => Question.QuestionItem.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage]);
+            List<Question> orderedQuestions = ordered.ToList();
+            foreach (Question q in orderedQuestions)
+            {
+                q.QuestionNumber = orderedQuestions.IndexOf(q) + 1;
+                q.QuestionItem.Title = "Question " + q.QuestionNumber;
+                float position = q.QuestionItem.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage];
+                Debug.WriteLine(q.QuestionNumber + ", " + position);
             }
         }
 
