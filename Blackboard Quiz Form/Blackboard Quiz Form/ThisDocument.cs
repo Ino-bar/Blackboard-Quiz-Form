@@ -15,18 +15,24 @@ namespace Blackboard_Quiz_Form
     public partial class ThisDocument
     {
         private List<object> Questions = new List<object>();
-        
+        public Word.ContentControl repeatingDistractor;
+        public Word.ContentControl repeatingQuestion;
+        public int i = 1;
+
         private void ThisDocument_Startup(object sender, System.EventArgs e)
         {
-            int i = 1;
-            int questions = SelectContentControlsByTag("question").Count;
-            foreach(object question in SelectContentControlsByTag("question"))
-            {
-                SelectContentControlsByTag("question")[i].Title = "Question " + i;
-                i++;
-            }
-            Console.Write(questions);
-            Console.Write(Questions);
+            Word.Range distractorRange = richTextContentControl1.Range;
+            distractorRange.Select();
+            Word.Range w = this.Application.Selection.Range;
+            repeatingDistractor = this.ContentControls.Add(Word.WdContentControlType.wdContentControlRepeatingSection, w);
+            repeatingDistractor.RepeatingSectionItems[1].InsertItemAfter();
+            Word.Range questionRange = buildingBlockGalleryContentControl1.Range;
+            questionRange.Select();
+            Word.Range r = this.Application.Selection.Range;
+            repeatingQuestion = this.ContentControls.Add(Word.WdContentControlType.wdContentControlRepeatingSection, r);
+            //repeatingQuestion.RepeatingSectionItems[1].InsertItemAfter();
+            repeatingQuestion.RepeatingSectionItemTitle = "Question " + i;
+            i++;
         }
 
         private void ThisDocument_Shutdown(object sender, System.EventArgs e)
@@ -42,12 +48,8 @@ namespace Blackboard_Quiz_Form
         /// </summary>
         private void InternalStartup()
         {
-            this.plainTextContentControl1.Entering += new Microsoft.Office.Tools.Word.ContentControlEnteringEventHandler(this.plainTextContentControl1_Entering);
-            this.plainTextContentControl1.Exiting += new Microsoft.Office.Tools.Word.ContentControlExitingEventHandler(this.plainTextContentControl1_Exiting);
-            this.richTextContentControl1.Entering += new Microsoft.Office.Tools.Word.ContentControlEnteringEventHandler(this.richTextContentControl1_Entering);
-            this.richTextContentControl2.Entering += new Microsoft.Office.Tools.Word.ContentControlEnteringEventHandler(this.richTextContentControl2_Entering);
-            this.richTextContentControl3.Exiting += new Microsoft.Office.Tools.Word.ContentControlExitingEventHandler(this.richTextContentControl3_Exiting);
-            this.plainTextContentControl2.Entering += new Microsoft.Office.Tools.Word.ContentControlEnteringEventHandler(this.plainTextContentControl2_Entering);
+            this.buildingBlockGalleryContentControl1.Entering += new Microsoft.Office.Tools.Word.ContentControlEnteringEventHandler(this.buildingBlockGalleryContentControl1_Entering);
+            this.buildingBlockGalleryContentControl1.Exiting += new Microsoft.Office.Tools.Word.ContentControlExitingEventHandler(this.buildingBlockGalleryContentControl1_Exiting);
             this.Startup += new System.EventHandler(this.ThisDocument_Startup);
             this.Shutdown += new System.EventHandler(this.ThisDocument_Shutdown);
 
@@ -55,43 +57,23 @@ namespace Blackboard_Quiz_Form
 
         #endregion
 
-        private void richTextContentControl2_Entering(object sender, ContentControlEnteringEventArgs e)
+        private void buildingBlockGalleryContentControl1_Entering(object sender, ContentControlEnteringEventArgs e)
         {
 
         }
 
-        private void plainTextContentControl2_Entering(object sender, ContentControlEnteringEventArgs e)
+        private void buildingBlockGalleryContentControl1_Exiting(object sender, ContentControlExitingEventArgs e)
         {
-
-        }
-
-        private void plainTextContentControl1_Entering(object sender, ContentControlEnteringEventArgs e)
-        {
-
-        }
-
-        private void richTextContentControl1_Entering(object sender, ContentControlEnteringEventArgs e)
-        {
-
-        }
-
-        private void richTextContentControl3_Exiting(object sender, ContentControlExitingEventArgs e)
-        {
-
-        }
-
-        private void plainTextContentControl1_Exiting(object sender, ContentControlExitingEventArgs e)
-        {
-            int i = 1;
-            foreach (object question in SelectContentControlsByTag("question"))
+            Word.ContentControl FirstQuestion = SelectContentControlsByTag("question")[1];
+            i = 1;
+            foreach (Word.ContentControl question in FirstQuestion.Range.ContentControls)
             {
-                SelectContentControlsByTag("question")[i].Title = "Question " + i;
-                i++;
-                //SelectContentControlsByTag("question").C
-            }           
-        }
-        private void questionAdded(object sender, ContentControlAddedEventArgs e)
-        {
+                if (question.Tag == "question")
+                {
+                    question.Title = "Question " + i;
+                    i++;
+                }
+            }
         }
     }
 }
