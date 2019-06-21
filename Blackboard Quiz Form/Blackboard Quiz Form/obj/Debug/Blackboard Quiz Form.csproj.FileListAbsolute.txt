@@ -28,3 +28,18 @@ C:\Users\jdunbar\Github\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Qui
 C:\Users\jdunbar\Github\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\obj\Debug\Blackboard Quiz Form.dll
 C:\Users\jdunbar\Github\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\obj\Debug\Blackboard Quiz Form.pdb
 C:\Users\jdunbar\Github\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\obj\Debug\Blackboard_Quiz_Form.Question.resources
+D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\bin\Debug\Blackboard Quiz Form.dll
+D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\bin\Debug\Blackboard Quiz Form.pdb
+D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\bin\Debug\Blackboard Quiz Form.dll.manifest
+D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\bin\Debug\Blackboard Quiz Form.vsto
+D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\bin\Debug\question form.docx
+D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\bin\Debug\Microsoft.Office.Tools.Common.v4.0.Utilities.dll
+D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\bin\Debug\Microsoft.Office.Tools.Word.v4.0.Utilities.dll
+D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\obj\Debug\Blackboard Quiz Form.csprojAssemblyReference.cache
+D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\obj\Debug\Blackboard_Quiz_Form.Question.resources
+D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\obj\Debug\Blackboard_Quiz_Form.Properties.Resources.resources
+D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\obj\Debug\Blackboard Quiz Form.csproj.GenerateResource.cache
+D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\obj\Debug\Blackboard Quiz Form.csproj.CoreCompileInputs.cache
+D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\obj\Debug\Blackboard Quiz Form.csproj.CopyComplete
+D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\obj\Debug\Blackboard Quiz Form.dll
+D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\obj\Debug\Blackboard Quiz Form.pdb

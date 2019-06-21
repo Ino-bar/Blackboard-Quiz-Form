@@ -16,28 +16,27 @@ namespace Blackboard_Quiz_Form
     public class Question
     {
         public Word.ContentControl QuestionItem { get; set; }
-        public float QuestionPosition { get; set; }
         public int QuestionNumber { get; set; }
+        public float QuestionPosition { get; set; }
     }
     public partial class ThisDocument
     {
-        private List<Word.ContentControl> Questions = new List<Word.ContentControl>();
-        int j = 1;
+        int oldPageCount = 1;
         private List<Question> questionList = new List<Question>();
+        List<List<Question>> listOfQuestionListsByPage = new List<List<Question>>();
         private void ThisDocument_Startup(object sender, System.EventArgs e)
         {
             Question newQuestion = new Question();
             newQuestion.QuestionItem = SelectContentControlsByTag("question")[1];
-            newQuestion.QuestionPosition = SelectContentControlsByTag("question")[1].Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage];
             newQuestion.QuestionNumber = 1;
             questionList.Add(newQuestion);
+            List<Question> newPageList = new List<Question>();
+            listOfQuestionListsByPage.Add(newPageList);
+            newPageList.Add(newQuestion);
         }
-
         private void ThisDocument_Shutdown(object sender, System.EventArgs e)
         {
-            
         }
-
         #region VSTO Designer generated code
 
         /// <summary>
@@ -53,144 +52,53 @@ namespace Blackboard_Quiz_Form
         }
 
         #endregion
-
         private void ThisDocument_ContentControlAfterAdd(Word.ContentControl NewContentControl, bool InUndoRedo)
         {
-
-            Debug.WriteLine(NewContentControl.Tag);
             if (NewContentControl.Tag == "question")
             {
                 Question NewQuestion = new Question();
-                questionList.Add(NewQuestion);
                 NewQuestion.QuestionItem = NewContentControl;
-                NewQuestion.QuestionPosition = NewContentControl.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage];
-                if (questionList.Count >= 1)
+                questionList.Add(NewQuestion);
+                int newPageCount = this.Content.get_Information(Microsoft.Office.Interop.Word.WdInformation.wdNumberOfPagesInDocument);
+                if(newPageCount > oldPageCount)
                 {
-                    NewQuestion.QuestionNumber = questionList.IndexOf(NewQuestion) + 1;
-                    Debug.Print(NewQuestion.QuestionNumber.ToString());
+                    List<Question> newPageList = new List<Question>();
+                    listOfQuestionListsByPage.Add(newPageList);
                 }
-                NewQuestion.QuestionItem.Title = "Question " + NewQuestion.QuestionNumber;
-            }
-            foreach(Question q in questionList)
-            {
-                //Debug.WriteLine(q.QuestionNumber);
-                float position = q.QuestionItem.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage];
-                Debug.WriteLine(q.QuestionNumber + ", " + position);
-            }
-            IOrderedEnumerable<Question> ordered = questionList.OrderBy(Question => Question.QuestionItem.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage]);
-            List<Question> orderedQuestions = ordered.ToList();
-            foreach (Question q in orderedQuestions)
-            {
-                q.QuestionNumber = orderedQuestions.IndexOf(q) + 1;
-                q.QuestionItem.Title = "Question " + q.QuestionNumber;
-                float position = q.QuestionItem.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage];
-                Debug.WriteLine(q.QuestionNumber + ", " + position);
-            }
-        }
-
-        private void plainTextContentControl1_Exiting(object sender, ContentControlExitingEventArgs e)
-        {
-            Question NewQuestion = new Question();
-            NewQuestion.QuestionItem = SelectContentControlsByTag("question")[j];
-            NewQuestion.QuestionPosition = SelectContentControlsByTag("question")[j].Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage];
-            questionList.Add(NewQuestion);
-
-            var ordered = questionList.OrderBy(Question => Question.QuestionPosition);
-            questionList = ordered.ToList();
-            for(int i = 1; i < questionList.Count; i++)
-            {
-                ordered = questionList.OrderBy(Question => Question.QuestionPosition);
-                questionList = ordered.ToList();
-                questionList[i].QuestionNumber = questionList.IndexOf(questionList[i]);
-                questionList[i].QuestionItem.Title = "Question " + questionList[i].QuestionNumber;
-                /*
-                if (questionList[i].QuestionItem.Title == questionList[i - 1].QuestionItem.Title)
+                if(NewQuestion.QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber] < newPageCount)
                 {
-                    questionList[i].QuestionNumber = questionList[i].QuestionNumber + 1;
-                    questionList[i].QuestionItem.Title = "Question " + questionList[i].QuestionNumber;
+                    listOfQuestionListsByPage[newPageCount - 2].Add(NewQuestion);
                 }
-                */
-            }
-            j++;
-            /*
-            Question lastQuestion = questionList[questionList.Count - 1];
-            foreach(Question q in questionList)
-            {
-                if(q.QuestionPosition > lastQuestion.QuestionPosition)
-                {
-                    lastQuestion = q;
-                    lastQuestion.QuestionItem.Title = "Question " + (questionList.Count - 1);
-                }
-            }
-            */
-
-
-
-
-            /*
-            foreach (Microsoft.Office.Interop.Word.ContentControl contentcontrol in this.Content.ContentControls)
-            {
-                
-                if (contentcontrol.Tag == "repeater" && contentcontrol.Title == null)
-                {
-                    
-                    contentcontrol.Title = "Question " + j;
-                }
-                
-            }
-            */
-
-            /*
-            for (int i = 1; i <= SelectContentControlsByTag("repeater").Count; i++)
-            {
-
-                float questionPosition = SelectContentControlsByTag("repeater")[i].Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage];
-                Debug.WriteLine(questionPosition);
-                if(i-1 != 0 && i+1 <= SelectContentControlsByTag("repeater").Count)
+                else
                 { 
-                    if(SelectContentControlsByTag("repeater")[i].Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage] > SelectContentControlsByTag("repeater")[i-1].Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage])
-                    {
-                        SelectContentControlsByTag("repeater")[i].Title = "Question " + i;
-                    }
-                    if (SelectContentControlsByTag("repeater")[i].Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage] < SelectContentControlsByTag("repeater")[i + 1].Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage])
-                    {
-                        SelectContentControlsByTag("repeater")[i].Title = "Question " + (i - 1);
+                    listOfQuestionListsByPage[newPageCount - 1].Add(NewQuestion);
+                }
+                oldPageCount = this.Content.get_Information(Microsoft.Office.Interop.Word.WdInformation.wdNumberOfPagesInDocument);
+                foreach (Question q in questionList)
+                {
+                    q.QuestionPosition = q.QuestionItem.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage];
+                    if (q.QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber] > 1)
+                    { 
+                        int pageOn = q.QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber];
+                        List<Question> previousPageListOfQuestions = listOfQuestionListsByPage[pageOn - 2];
+                        q.QuestionPosition += previousPageListOfQuestions[previousPageListOfQuestions.Count - 1].QuestionPosition;
+                        int lastQPageNumber = previousPageListOfQuestions[previousPageListOfQuestions.Count - 1].QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber];
+                        Debug.WriteLine(previousPageListOfQuestions[previousPageListOfQuestions.Count - 1].QuestionItem.Title + "; " + lastQPageNumber);
+                        foreach (Question question in previousPageListOfQuestions)
+                        {
+                            Debug.WriteLine(question.QuestionItem.Title + "; " + question.QuestionPosition);
+                        }
                     }
                 }
-                
-            }
-            */
-        }
-        /*
-        private void plainTextContentControl3_Exiting(object sender, ContentControlExitingEventArgs e)
-        {
-            Question NewQuestion = new Question();
-            NewQuestion.QuestionItem = SelectContentControlsByTag("question")[j];
-            NewQuestion.QuestionPosition = SelectContentControlsByTag("question")[j].Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage];
-            questionList.Add(NewQuestion);
-
-            var ordered = questionList.OrderBy(Question => Question.QuestionPosition);
-            questionList = ordered.ToList();
-            for (int i = 1; i < questionList.Count; i++)
-            {
-                ordered = questionList.OrderBy(Question => Question.QuestionPosition);
-                questionList = ordered.ToList();
-                questionList[i].QuestionNumber = questionList.IndexOf(questionList[i]);
-                questionList[i].QuestionItem.Title = "Question " + questionList[i].QuestionNumber;
-
-                if (questionList[i].QuestionItem.Title == questionList[i - 1].QuestionItem.Title)
+                IOrderedEnumerable<Question> ordered = questionList.OrderBy(Question => Question.QuestionPosition);
+                List<Question> orderedQuestions = ordered.ToList();
+                foreach (Question q in orderedQuestions)
                 {
-                    questionList[i].QuestionNumber = questionList[i].QuestionNumber + 1;
-                    questionList[i].QuestionItem.Title = "Question " + questionList[i].QuestionNumber;
-                }
-                if (questionList[i].QuestionNumber < questionList[i - 1].QuestionNumber)
-                {
-                    questionList[i].QuestionNumber = questionList[i - 1].QuestionNumber + 1;
-                    questionList[i].QuestionItem.Title = "Question " + questionList[i].QuestionNumber;
+                    q.QuestionNumber = orderedQuestions.IndexOf(q) + 1;
+                    q.QuestionItem.Title = "Question " + q.QuestionNumber;
+                    Debug.WriteLine(q.QuestionItem.Title + "; " + q.QuestionPosition);
                 }
             }
-            j++;
         }
-        */
     }
 }
