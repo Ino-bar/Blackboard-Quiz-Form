@@ -22,6 +22,7 @@ namespace Blackboard_Quiz_Form
     public partial class ThisDocument
     {
         int oldPageCount = 1;
+        Question lastQuestionOnPreviousPage;
         private List<Question> questionList = new List<Question>();
         List<List<Question>> listOfQuestionListsByPage = new List<List<Question>>();
         private void ThisDocument_Startup(object sender, System.EventArgs e)
@@ -60,43 +61,40 @@ namespace Blackboard_Quiz_Form
                 NewQuestion.QuestionItem = NewContentControl;
                 questionList.Add(NewQuestion);
                 int newPageCount = this.Content.get_Information(Microsoft.Office.Interop.Word.WdInformation.wdNumberOfPagesInDocument);
-                if(newPageCount > oldPageCount)
+                if (newPageCount > 1)
                 {
-                    List<Question> newPageList = new List<Question>();
-                    listOfQuestionListsByPage.Add(newPageList);
+                    List<Question> previousPageQuestions = questionList.FindAll(x => x.QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber] == newPageCount - 1);
+                    lastQuestionOnPreviousPage = previousPageQuestions.OrderByDescending(item => item.QuestionPosition).First();
+                    Debug.WriteLine("The last question on the previous page is " + lastQuestionOnPreviousPage.QuestionNumber);
                 }
-                if(NewQuestion.QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber] < newPageCount)
-                {
-                    listOfQuestionListsByPage[newPageCount - 2].Add(NewQuestion);
-                }
-                else
-                { 
-                    listOfQuestionListsByPage[newPageCount - 1].Add(NewQuestion);
-                }
-                oldPageCount = this.Content.get_Information(Microsoft.Office.Interop.Word.WdInformation.wdNumberOfPagesInDocument);
                 foreach (Question q in questionList)
                 {
                     q.QuestionPosition = q.QuestionItem.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage];
                     if (q.QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber] > 1)
-                    { 
-                        int pageOn = q.QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber];
-                        List<Question> previousPageListOfQuestions = listOfQuestionListsByPage[pageOn - 2];
-                        q.QuestionPosition += previousPageListOfQuestions[previousPageListOfQuestions.Count - 1].QuestionPosition;
-                        int lastQPageNumber = previousPageListOfQuestions[previousPageListOfQuestions.Count - 1].QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber];
-                        Debug.WriteLine(previousPageListOfQuestions[previousPageListOfQuestions.Count - 1].QuestionItem.Title + "; " + lastQPageNumber);
-                        foreach (Question question in previousPageListOfQuestions)
-                        {
-                            Debug.WriteLine(question.QuestionItem.Title + "; " + question.QuestionPosition);
-                        }
+                    {
+                        q.QuestionPosition += lastQuestionOnPreviousPage.QuestionPosition;
                     }
                 }
                 IOrderedEnumerable<Question> ordered = questionList.OrderBy(Question => Question.QuestionPosition);
                 List<Question> orderedQuestions = ordered.ToList();
                 foreach (Question q in orderedQuestions)
                 {
-                    q.QuestionNumber = orderedQuestions.IndexOf(q) + 1;
-                    q.QuestionItem.Title = "Question " + q.QuestionNumber;
-                    Debug.WriteLine(q.QuestionItem.Title + "; " + q.QuestionPosition);
+                    if (orderedQuestions.IndexOf(q) > 0)
+                    { 
+                        q.QuestionNumber = orderedQuestions[orderedQuestions.IndexOf(q) - 1].QuestionNumber + 1;
+                        q.QuestionItem.Title = "Question " + q.QuestionNumber;
+                    }
+                    /*
+                if (orderedQuestions.IndexOf(q) > 0)
+                {
+                    List<Question> questionSubList = orderedQuestions.GetRange(0, orderedQuestions.IndexOf(q));
+
+                }
+
+                q.QuestionNumber = orderedQuestions.IndexOf(q) + 1;
+                q.QuestionItem.Title = "Question " + q.QuestionNumber;
+                Debug.WriteLine(q.QuestionItem.Title + "; " + q.QuestionPosition);
+                */
                 }
             }
         }
