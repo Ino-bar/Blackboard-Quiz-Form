@@ -21,7 +21,6 @@ namespace Blackboard_Quiz_Form
     }
     public partial class ThisDocument
     {
-        int oldPageCount = 1;
         Question lastQuestionOnPreviousPage;
         private List<Question> questionList = new List<Question>();
         List<List<Question>> listOfQuestionListsByPage = new List<List<Question>>();
@@ -61,6 +60,10 @@ namespace Blackboard_Quiz_Form
                 NewQuestion.QuestionItem = NewContentControl;
                 questionList.Add(NewQuestion);
                 int newPageCount = this.Content.get_Information(Microsoft.Office.Interop.Word.WdInformation.wdNumberOfPagesInDocument);
+                foreach (Question q in questionList)
+                {
+                    q.QuestionPosition = q.QuestionItem.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage];
+                }
                 if (newPageCount > 1)
                 {
                     List<Question> previousPageQuestions = questionList.FindAll(x => x.QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber] == newPageCount - 1);
@@ -69,7 +72,6 @@ namespace Blackboard_Quiz_Form
                 }
                 foreach (Question q in questionList)
                 {
-                    q.QuestionPosition = q.QuestionItem.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage];
                     if (q.QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber] > 1)
                     {
                         q.QuestionPosition += lastQuestionOnPreviousPage.QuestionPosition;
@@ -81,7 +83,7 @@ namespace Blackboard_Quiz_Form
                 {
                     if (orderedQuestions.IndexOf(q) > 0)
                     { 
-                        q.QuestionNumber = orderedQuestions[orderedQuestions.IndexOf(q) - 1].QuestionNumber + 1;
+                        q.QuestionNumber = orderedQuestions.IndexOf(q) + 1;
                         q.QuestionItem.Title = "Question " + q.QuestionNumber;
                     }
                     /*
