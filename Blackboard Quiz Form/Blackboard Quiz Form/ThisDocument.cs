@@ -6,11 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.ComponentModel;
 using System.Xml.Linq;
 using Microsoft.Office.Tools.Word;
 using Microsoft.VisualStudio.Tools.Applications.Runtime;
 using Office = Microsoft.Office.Core;
 using Word = Microsoft.Office.Interop.Word;
+
 
 namespace Blackboard_Quiz_Form
 {
@@ -24,6 +26,7 @@ namespace Blackboard_Quiz_Form
     public partial class ThisDocument
     {
         private List<Question> questionList = new List<Question>();
+        int undoCount = 0;
         private void ThisDocument_Startup(object sender, System.EventArgs e)
         {
             Question newQuestion = new Question();
@@ -33,6 +36,7 @@ namespace Blackboard_Quiz_Form
         }
         private void ThisDocument_Shutdown(object sender, System.EventArgs e)
         {
+            Debug.WriteLine(SelectContentControlsByTag("question").Count);
         }
         #region VSTO Designer generated code
 
@@ -54,76 +58,51 @@ namespace Blackboard_Quiz_Form
         {
             if (NewContentControl.Tag == "question" && InUndoRedo == false)
             {
+                undoCount = 0;
                 Question NewQuestion = new Question();
                 NewQuestion.QuestionItem = NewContentControl;
                 questionList.Add(NewQuestion);
                 NewQuestion.QuestionPosition = NewQuestion.QuestionItem.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage] + NewQuestion.QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber] * 1000;
-                var questionsAbove = questionList.FindAll(x => x.QuestionPosition >= NewQuestion.QuestionPosition);
-                if(questionsAbove.Count !=0)
-                { 
-                    foreach(Question q in questionsAbove)
-                    {
-                        q.QuestionPosition = q.QuestionItem.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage] + q.QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber] * 1000;
-                    }
-                }
-                var orderedQuestions = questionList.OrderBy(o => o.QuestionPosition).ToList();
-                foreach (Question q in orderedQuestions)
-                {
-                        q.QuestionNumber = orderedQuestions.IndexOf(q) + 1;
-                        q.QuestionItem.Title = "Question " + q.QuestionNumber;
-                }
-            }
-            if(InUndoRedo == true)
-            {
-                foreach (Question q in questionList)
-                {
-                    if (q.QuestionItem == NewContentControl)
-                    {
-                        Question questionToRemove = q;
-                        List<Question> questionsAbove = questionList.FindAll(x => x.QuestionPosition >= questionToRemove.QuestionPosition);
-                        questionList.Remove(questionToRemove);
-                        if (questionsAbove.Count != 0)
-                        {
-                            foreach (Question question in questionsAbove)
-                            {
-                                q.QuestionPosition = q.QuestionItem.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage] + q.QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber] * 1000;
-                            }
-                        }
-                        List<Question> orderedQuestions = questionList.OrderBy(o => o.QuestionPosition).ToList();
-                        foreach (Question question in orderedQuestions)
-                        {
-                            q.QuestionNumber = orderedQuestions.IndexOf(q) + 1;
-                            q.QuestionItem.Title = "Question " + q.QuestionNumber;
-                        }
-                    }
-                }
+                questionList.Select(c => { c.QuestionPosition = c.QuestionItem.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage] + c.QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber] * 1000; return c; }).ToList();
+                questionList = questionList.OrderBy(o => o.QuestionPosition).ToList();
+                questionList.Select(c => { c.QuestionNumber = questionList.IndexOf(c) + 1; return c; }).ToList();
+                questionList.Select(c => { c.QuestionItem.Title = "Question " + c.QuestionNumber; return c; }).ToList();
             }
         }
         private void ThisDocument_ContentControlBeforeDelete(Word.ContentControl OldContentControl, bool InUndoRedo)
         {
-            if(OldContentControl.Tag == "question" & InUndoRedo == false)
+            if(OldContentControl.Tag == "question" && InUndoRedo == false)
             {
                 string questionTitle = OldContentControl.Title;
                 string resultString = Regex.Match(questionTitle, @"\d+").Value;
                 int qNo = Int32.Parse(resultString);
-                Debug.WriteLine(qNo);
-                Question questionToRemove = questionList[qNo - 1];
-                List<Question> questionsAbove = questionList.FindAll(x => x.QuestionPosition >= questionToRemove.QuestionPosition);
-                questionList.Remove(questionToRemove);
-                questionsAbove.Remove(questionToRemove);
-                if (questionsAbove.Count != 0)
-                {
-                    foreach (Question q in questionsAbove)
-                    {
-                        q.QuestionPosition = q.QuestionItem.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage] + q.QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber] * 1000;
-                    }
-                }
-                List<Question> orderedQuestions = questionList.OrderBy(o => o.QuestionPosition).ToList();
-                foreach (Question q in orderedQuestions)
-                {
-                    q.QuestionNumber = orderedQuestions.IndexOf(q) + 1;
-                    q.QuestionItem.Title = "Question " + q.QuestionNumber;
-                }                                                                                   
+                questionList[qNo - 1].QuestionItem = null;
+                questionList[qNo - 1] = null;
+                questionList.RemoveAt(qNo - 1);
+                Controls.Remove(OldContentControl);
+                questionList.Select(c => { c.QuestionPosition = c.QuestionItem.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage] + c.QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber] * 1000; return c; }).ToList();
+                questionList = questionList.OrderBy(o => o.QuestionPosition).ToList();
+                questionList.Select(c => { c.QuestionNumber = questionList.IndexOf(c) + 1; return c; }).ToList();
+                questionList.Select(c => { c.QuestionItem.Title = "Question " + c.QuestionNumber; return c; }).ToList();
+            }
+            else if (OldContentControl.Tag == "question" && InUndoRedo == true && undoCount == 0)
+            {
+                Debug.WriteLine(OldContentControl.ID);
+                Debug.WriteLine(OldContentControl.Tag);
+                Debug.WriteLine(OldContentControl.Title);
+                string questionTitle = OldContentControl.Title;
+                string resultString = Regex.Match(questionTitle, @"\d+").Value;
+                int qNo = Int32.Parse(resultString);
+                questionList[qNo - 1].QuestionItem = null;
+                questionList[qNo - 1] = null;
+                questionList.RemoveAt(qNo - 1);
+                Controls.Remove(OldContentControl);
+                questionList.Select(c => { c.QuestionPosition = c.QuestionItem.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage] + c.QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber] * 1000; return c; }).ToList();
+                questionList = questionList.OrderBy(o => o.QuestionPosition).ToList();
+                questionList.Select(c => { c.QuestionNumber = questionList.IndexOf(c) + 1; return c; }).ToList();
+                //questionList.Select(c => { c.QuestionItem.Title = "Question " + c.QuestionNumber; return c; }).ToList();
+                undoCount += 1;
+                InUndoRedo = false;
             }
         }
     }
