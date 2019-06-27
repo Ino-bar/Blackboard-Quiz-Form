@@ -26,7 +26,6 @@ namespace Blackboard_Quiz_Form
     public partial class ThisDocument
     {
         private List<Question> questionList = new List<Question>();
-        int undoCount = 0;
         private void ThisDocument_Startup(object sender, System.EventArgs e)
         {
             Question newQuestion = new Question();
@@ -58,7 +57,6 @@ namespace Blackboard_Quiz_Form
         {
             if (NewContentControl.Tag == "question" && InUndoRedo == false)
             {
-                undoCount = 0;
                 Question NewQuestion = new Question();
                 NewQuestion.QuestionItem = NewContentControl;
                 questionList.Add(NewQuestion);
@@ -71,7 +69,7 @@ namespace Blackboard_Quiz_Form
         }
         private void ThisDocument_ContentControlBeforeDelete(Word.ContentControl OldContentControl, bool InUndoRedo)
         {
-            if(OldContentControl.Tag == "question" && InUndoRedo == false)
+            if (OldContentControl.Tag == "question" && InUndoRedo == false)
             {
                 string questionTitle = OldContentControl.Title;
                 string resultString = Regex.Match(questionTitle, @"\d+").Value;
@@ -85,11 +83,8 @@ namespace Blackboard_Quiz_Form
                 questionList.Select(c => { c.QuestionNumber = questionList.IndexOf(c) + 1; return c; }).ToList();
                 questionList.Select(c => { c.QuestionItem.Title = "Question " + c.QuestionNumber; return c; }).ToList();
             }
-            else if (OldContentControl.Tag == "question" && InUndoRedo == true && undoCount == 0)
+            else if (OldContentControl.Tag == "question" && InUndoRedo == true)
             {
-                Debug.WriteLine(OldContentControl.ID);
-                Debug.WriteLine(OldContentControl.Tag);
-                Debug.WriteLine(OldContentControl.Title);
                 string questionTitle = OldContentControl.Title;
                 string resultString = Regex.Match(questionTitle, @"\d+").Value;
                 int qNo = Int32.Parse(resultString);
@@ -101,8 +96,6 @@ namespace Blackboard_Quiz_Form
                 questionList = questionList.OrderBy(o => o.QuestionPosition).ToList();
                 questionList.Select(c => { c.QuestionNumber = questionList.IndexOf(c) + 1; return c; }).ToList();
                 //questionList.Select(c => { c.QuestionItem.Title = "Question " + c.QuestionNumber; return c; }).ToList();
-                undoCount += 1;
-                InUndoRedo = false;
             }
         }
     }
