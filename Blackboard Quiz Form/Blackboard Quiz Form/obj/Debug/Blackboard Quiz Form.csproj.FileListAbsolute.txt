@@ -36,10 +36,10 @@ D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\bin\Deb
 D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\bin\Debug\Microsoft.Office.Tools.Common.v4.0.Utilities.dll
 D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\bin\Debug\Microsoft.Office.Tools.Word.v4.0.Utilities.dll
 D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\obj\Debug\Blackboard Quiz Form.csprojAssemblyReference.cache
-D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\obj\Debug\Blackboard_Quiz_Form.Question.resources
 D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\obj\Debug\Blackboard_Quiz_Form.Properties.Resources.resources
 D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\obj\Debug\Blackboard Quiz Form.csproj.GenerateResource.cache
 D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\obj\Debug\Blackboard Quiz Form.csproj.CoreCompileInputs.cache
 D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\obj\Debug\Blackboard Quiz Form.csproj.CopyComplete
 D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\obj\Debug\Blackboard Quiz Form.dll
 D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\obj\Debug\Blackboard Quiz Form.pdb
+D:\GitHub\Blackboard-Quiz-Form\Blackboard Quiz Form\Blackboard Quiz Form\obj\Debug\Blackboard_Quiz_Form.Question.resources

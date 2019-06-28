@@ -16,20 +16,16 @@ using Word = Microsoft.Office.Interop.Word;
 
 namespace Blackboard_Quiz_Form
 {
+
     public class Question
     {
         public Word.ContentControl QuestionItem { get; set; }
         public int QuestionNumber { get; set; }
         public float QuestionPosition { get; set; }
-
     }
     public partial class ThisDocument
     {
         private List<Question> questionList = new List<Question>();
-        List<Word.ContentControl> allContentControls = new List<Word.ContentControl>();
-        int undoBlockCount = 0;
-        int undoCount = 0;
-        bool questionIsLast;
         private void ThisDocument_Startup(object sender, System.EventArgs e)
         {
             Question newQuestion = new Question();
@@ -39,7 +35,6 @@ namespace Blackboard_Quiz_Form
         }
         private void ThisDocument_Shutdown(object sender, System.EventArgs e)
         {
-            Debug.WriteLine(SelectContentControlsByTag("question").Count);
         }
         #region VSTO Designer generated code
 
@@ -61,10 +56,24 @@ namespace Blackboard_Quiz_Form
         {
             if (NewContentControl.Tag == "question" && InUndoRedo == false)
             {
-                undoCount = 0;
-                undoBlockCount = 0;
                 Question NewQuestion = new Question();
                 NewQuestion.QuestionItem = NewContentControl;
+                NewQuestion.QuestionItem.Title = "empty";
+                List<Word.ContentControl> questionContentControls = new List<Word.ContentControl>();
+                List<Question> updatedQuestionList = new List<Question>();
+                for (var i = 1; i <= SelectContentControlsByTag("question").Count; i++)
+                {
+                    questionContentControls.Add(SelectContentControlsByTag("question")[i]);
+                }
+                questionContentControls = questionContentControls.FindAll(s => s.Title.Contains("Question"));
+                foreach (Word.ContentControl questionContentControl in questionContentControls)
+                {
+                    string questionTitle = questionContentControl.Title;
+                    string resultString = Regex.Match(questionTitle, @"\d+").Value;
+                    int qNo = Int32.Parse(resultString);
+                    updatedQuestionList.Add(questionList[qNo - 1]);
+                }
+                questionList = updatedQuestionList;
                 questionList.Add(NewQuestion);
                 NewQuestion.QuestionPosition = NewQuestion.QuestionItem.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage] + NewQuestion.QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber] * 1000;
                 questionList.Select(c => { c.QuestionPosition = c.QuestionItem.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage] + c.QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber] * 1000; return c; }).ToList();
@@ -89,45 +98,6 @@ namespace Blackboard_Quiz_Form
                 questionList.Select(c => { c.QuestionNumber = questionList.IndexOf(c) + 1; return c; }).ToList();
                 questionList.Select(c => { c.QuestionItem.Title = "Question " + c.QuestionNumber; return c; }).ToList();
             }
-            Debug.WriteLine(OldContentControl.Tag);
-            if (OldContentControl.Tag == "question" && InUndoRedo == true && undoCount < 1)
-            {
-                Debug.WriteLine(OldContentControl.Type);
-                Debug.WriteLine(OldContentControl.Type == Word.WdContentControlType.wdContentControlRichText);
-                if(OldContentControl.Type == Word.WdContentControlType.wdContentControlRichText)
-                { 
-                    Debug.WriteLine("This content control is a " + OldContentControl.Tag);
-                    string questionTitle = OldContentControl.Title;
-                    string resultString = Regex.Match(questionTitle, @"\d+").Value;
-                    int qNo = Int32.Parse(resultString);
-                    questionIsLast = questionList.IndexOf(questionList[qNo - 1]) == questionList.Count - 1;
-                    questionList[qNo - 1].QuestionItem = null;
-                    questionList[qNo - 1] = null;
-                    questionList.RemoveAt(qNo - 1);
-                    Controls.Remove(OldContentControl);
-                    questionList.Select(c => { c.QuestionPosition = c.QuestionItem.Range.Information[Word.WdInformation.wdVerticalPositionRelativeToPage] + c.QuestionItem.Range.Information[Word.WdInformation.wdActiveEndPageNumber] * 1000; return c; }).ToList();
-                    questionList = questionList.OrderBy(o => o.QuestionPosition).ToList();
-                    questionList.Select(c => { c.QuestionNumber = questionList.IndexOf(c) + 1; return c; }).ToList();
-                    undoCount++;
-                    Debug.WriteLine(Application.UndoRecord);
-                    //questionList.Select(c => { c.QuestionItem.Title = "Question " + c.QuestionNumber; return c; }).ToList();
-                }
-            }
-            undoBlockCount++;
-            if(questionIsLast == true)
-            {
-                if (undoBlockCount == this.ContentControls.Count)
-                {
-                    undoCount = 0;
-                    undoBlockCount = 0;
-                }
-            }
-            else if (questionIsLast == false)
-                if(undoBlockCount == 4)
-                {
-                    undoCount = 0;
-                    undoBlockCount = 0;
-                }
         }
     }
 }
