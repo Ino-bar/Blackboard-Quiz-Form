@@ -22,6 +22,8 @@ namespace Blackboard_Quiz_Form
         public Word.ContentControl QuestionItem { get; set; }
         public int QuestionNumber { get; set; }
         public float QuestionPosition { get; set; }
+        public Word.ContentControl QuestionContainer { get; set; }
+        public List<Word.ContentControl> QuestionDistractors { get; set; }
     }
     public partial class ThisDocument
     {
@@ -30,8 +32,12 @@ namespace Blackboard_Quiz_Form
         {
             Question newQuestion = new Question();
             newQuestion.QuestionItem = SelectContentControlsByTag("question")[1];
+            newQuestion.QuestionContainer = newQuestion.QuestionItem.ParentContentControl;
             newQuestion.QuestionNumber = 1;
             questionList.Add(newQuestion);
+            newQuestion.QuestionDistractors = new List<Word.ContentControl>();
+            newQuestion.QuestionDistractors.Add(SelectContentControlsByTag("distractor")[1]);
+            newQuestion.QuestionDistractors[0].Title = "Answer " + (newQuestion.QuestionDistractors.IndexOf(newQuestion.QuestionDistractors[0]) + 1);
         }
         private void ThisDocument_Shutdown(object sender, System.EventArgs e)
         {
@@ -58,6 +64,8 @@ namespace Blackboard_Quiz_Form
             {
                 Question NewQuestion = new Question();
                 NewQuestion.QuestionItem = NewContentControl;
+                NewQuestion.QuestionContainer = NewQuestion.QuestionItem.ParentContentControl;
+                NewQuestion.QuestionDistractors = new List<Word.ContentControl>();
                 NewQuestion.QuestionItem.Title = "empty";
                 List<Word.ContentControl> questionContentControls = new List<Word.ContentControl>();
                 List<Question> updatedQuestionList = new List<Question>();
@@ -80,7 +88,19 @@ namespace Blackboard_Quiz_Form
                 questionList = questionList.OrderBy(o => o.QuestionPosition).ToList();
                 questionList.Select(c => { c.QuestionNumber = questionList.IndexOf(c) + 1; return c; }).ToList();
                 questionList.Select(c => { c.QuestionItem.Title = "Question " + c.QuestionNumber; return c; }).ToList();
+                questionList.Select(c => { c.QuestionContainer.Title = "Question " + c.QuestionNumber; return c; }).ToList();
+                Debug.WriteLine(NewQuestion.QuestionItem.ParentContentControl.Tag);
             }
+            else if(NewContentControl.Tag == "distractor" && InUndoRedo == false)
+            {
+                foreach (Question q in questionList)
+                    if (NewContentControl.ParentContentControl == q.QuestionContainer)
+                    { 
+                        q.QuestionDistractors.Add(NewContentControl);
+                        NewContentControl.Title = "Answer " + (q.QuestionDistractors.IndexOf(NewContentControl) + 1);
+                    }
+            }
+            Debug.WriteLine("Content control added");
         }
         private void ThisDocument_ContentControlBeforeDelete(Word.ContentControl OldContentControl, bool InUndoRedo)
         {
@@ -97,6 +117,18 @@ namespace Blackboard_Quiz_Form
                 questionList = questionList.OrderBy(o => o.QuestionPosition).ToList();
                 questionList.Select(c => { c.QuestionNumber = questionList.IndexOf(c) + 1; return c; }).ToList();
                 questionList.Select(c => { c.QuestionItem.Title = "Question " + c.QuestionNumber; return c; }).ToList();
+            }
+            if(OldContentControl.Tag == "distractor" && InUndoRedo == false)
+            {
+                foreach (Question q in questionList)
+                    if (OldContentControl.ParentContentControl == q.QuestionContainer)
+                    {
+                        q.QuestionDistractors.Remove(OldContentControl);
+                        foreach(Word.ContentControl distractor in q.QuestionDistractors)
+                        {
+                            distractor.Title = "Answer " + (q.QuestionDistractors.IndexOf(distractor) + 1);
+                        }
+                    }
             }
         }
     }
