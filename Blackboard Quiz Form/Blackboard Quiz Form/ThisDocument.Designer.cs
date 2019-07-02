@@ -25,9 +25,15 @@ namespace Blackboard_Quiz_Form {
         
         internal Microsoft.Office.Tools.Word.RichTextContentControl richTextContentControl3;
         
+        internal Microsoft.Office.Tools.Word.PlainTextContentControl plainTextContentControl1;
+        
+        internal Microsoft.Office.Tools.Word.RichTextContentControl richTextContentControl6;
+        
+        internal Microsoft.Office.Tools.Word.RichTextContentControl richTextContentControl7;
+        
         internal Microsoft.Office.Tools.Word.PlainTextContentControl plainTextContentControl2;
         
-        internal Microsoft.Office.Tools.Word.PlainTextContentControl plainTextContentControl1;
+        internal Microsoft.Office.Tools.Word.GroupContentControl groupContentControl1;
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Tools.Office.ProgrammingModel.dll", "15.0.0.0")]
         private global::System.Object missing = global::System.Type.Missing;
@@ -135,8 +141,11 @@ namespace Blackboard_Quiz_Form {
             this.richTextContentControl1.BeginInit();
             this.richTextContentControl2.BeginInit();
             this.richTextContentControl3.BeginInit();
-            this.plainTextContentControl2.BeginInit();
             this.plainTextContentControl1.BeginInit();
+            this.richTextContentControl6.BeginInit();
+            this.richTextContentControl7.BeginInit();
+            this.plainTextContentControl2.BeginInit();
+            this.groupContentControl1.BeginInit();
         }
         
         /// 
@@ -144,8 +153,11 @@ namespace Blackboard_Quiz_Form {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Tools.Office.ProgrammingModel.dll", "15.0.0.0")]
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Never)]
         private void EndInitialization() {
-            this.plainTextContentControl1.EndInit();
+            this.groupContentControl1.EndInit();
             this.plainTextContentControl2.EndInit();
+            this.richTextContentControl7.EndInit();
+            this.richTextContentControl6.EndInit();
+            this.plainTextContentControl1.EndInit();
             this.richTextContentControl3.EndInit();
             this.richTextContentControl2.EndInit();
             this.richTextContentControl1.EndInit();
@@ -162,8 +174,11 @@ namespace Blackboard_Quiz_Form {
             this.richTextContentControl1 = Globals.Factory.CreateRichTextContentControl(null, null, "1878742057", "richTextContentControl1", this);
             this.richTextContentControl2 = Globals.Factory.CreateRichTextContentControl(null, null, "912591641", "richTextContentControl2", this);
             this.richTextContentControl3 = Globals.Factory.CreateRichTextContentControl(null, null, "1485348308", "richTextContentControl3", this);
-            this.plainTextContentControl2 = Globals.Factory.CreatePlainTextContentControl(null, null, "2374026026", "plainTextContentControl2", this);
             this.plainTextContentControl1 = Globals.Factory.CreatePlainTextContentControl(null, null, "4080374810", "plainTextContentControl1", this);
+            this.richTextContentControl6 = Globals.Factory.CreateRichTextContentControl(null, null, "2525346835", "richTextContentControl6", this);
+            this.richTextContentControl7 = Globals.Factory.CreateRichTextContentControl(null, null, "3691778102", "richTextContentControl7", this);
+            this.plainTextContentControl2 = Globals.Factory.CreatePlainTextContentControl(null, null, "2374026026", "plainTextContentControl2", this);
+            this.groupContentControl1 = Globals.Factory.CreateGroupContentControl(null, null, "250862739", "groupContentControl1", this);
         }
         
         /// 
@@ -189,13 +204,25 @@ namespace Blackboard_Quiz_Form {
             // 
             this.richTextContentControl3.DefaultDataSourceUpdateMode = System.Windows.Forms.DataSourceUpdateMode.Never;
             // 
+            // plainTextContentControl1
+            // 
+            this.plainTextContentControl1.DefaultDataSourceUpdateMode = System.Windows.Forms.DataSourceUpdateMode.Never;
+            // 
+            // richTextContentControl6
+            // 
+            this.richTextContentControl6.DefaultDataSourceUpdateMode = System.Windows.Forms.DataSourceUpdateMode.Never;
+            // 
+            // richTextContentControl7
+            // 
+            this.richTextContentControl7.DefaultDataSourceUpdateMode = System.Windows.Forms.DataSourceUpdateMode.Never;
+            // 
             // plainTextContentControl2
             // 
             this.plainTextContentControl2.DefaultDataSourceUpdateMode = System.Windows.Forms.DataSourceUpdateMode.Never;
             // 
-            // plainTextContentControl1
+            // groupContentControl1
             // 
-            this.plainTextContentControl1.DefaultDataSourceUpdateMode = System.Windows.Forms.DataSourceUpdateMode.Never;
+            this.groupContentControl1.DefaultDataSourceUpdateMode = System.Windows.Forms.DataSourceUpdateMode.Never;
             // 
             // ThisDocument
             // 
@@ -213,8 +240,11 @@ namespace Blackboard_Quiz_Form {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Tools.Office.ProgrammingModel.dll", "15.0.0.0")]
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Never)]
         protected override void OnShutdown() {
-            this.plainTextContentControl1.Dispose();
+            this.groupContentControl1.Dispose();
             this.plainTextContentControl2.Dispose();
+            this.richTextContentControl7.Dispose();
+            this.richTextContentControl6.Dispose();
+            this.plainTextContentControl1.Dispose();
             this.richTextContentControl3.Dispose();
             this.richTextContentControl2.Dispose();
             this.richTextContentControl1.Dispose();
