@@ -35,6 +35,8 @@ namespace Blackboard_Quiz_Form {
         
         internal Microsoft.Office.Tools.Word.GroupContentControl groupContentControl1;
         
+        internal Microsoft.Office.Tools.Word.DropDownListContentControl dropDownListContentControl1;
+        
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Tools.Office.ProgrammingModel.dll", "15.0.0.0")]
         private global::System.Object missing = global::System.Type.Missing;
         
@@ -146,6 +148,7 @@ namespace Blackboard_Quiz_Form {
             this.richTextContentControl7.BeginInit();
             this.plainTextContentControl2.BeginInit();
             this.groupContentControl1.BeginInit();
+            this.dropDownListContentControl1.BeginInit();
         }
         
         /// 
@@ -153,6 +156,7 @@ namespace Blackboard_Quiz_Form {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Tools.Office.ProgrammingModel.dll", "15.0.0.0")]
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Never)]
         private void EndInitialization() {
+            this.dropDownListContentControl1.EndInit();
             this.groupContentControl1.EndInit();
             this.plainTextContentControl2.EndInit();
             this.richTextContentControl7.EndInit();
@@ -179,6 +183,7 @@ namespace Blackboard_Quiz_Form {
             this.richTextContentControl7 = Globals.Factory.CreateRichTextContentControl(null, null, "3691778102", "richTextContentControl7", this);
             this.plainTextContentControl2 = Globals.Factory.CreatePlainTextContentControl(null, null, "2374026026", "plainTextContentControl2", this);
             this.groupContentControl1 = Globals.Factory.CreateGroupContentControl(null, null, "250862739", "groupContentControl1", this);
+            this.dropDownListContentControl1 = Globals.Factory.CreateDropDownListContentControl(null, null, "950048911", "dropDownListContentControl1", this);
         }
         
         /// 
@@ -224,6 +229,10 @@ namespace Blackboard_Quiz_Form {
             // 
             this.groupContentControl1.DefaultDataSourceUpdateMode = System.Windows.Forms.DataSourceUpdateMode.Never;
             // 
+            // dropDownListContentControl1
+            // 
+            this.dropDownListContentControl1.DefaultDataSourceUpdateMode = System.Windows.Forms.DataSourceUpdateMode.Never;
+            // 
             // ThisDocument
             // 
         }
@@ -240,6 +249,7 @@ namespace Blackboard_Quiz_Form {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Tools.Office.ProgrammingModel.dll", "15.0.0.0")]
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Never)]
         protected override void OnShutdown() {
+            this.dropDownListContentControl1.Dispose();
             this.groupContentControl1.Dispose();
             this.plainTextContentControl2.Dispose();
             this.richTextContentControl7.Dispose();
